@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ir_model_fields_unanony_wizard_form_add_path" model="ir.ui.view">
+        <field name="name">ir.model.fields.unonymization.wizard.form</field>
+        <field name="model">ir.model.fields.anonymize.wizard</field>
+        <field name="inherit_id" ref="anonymization.view_ir_model_fields_anonymize_wizard_form"/>
+        <field name="arch" type="xml">
+            <field name="file_import" position="after">
+                <field name="file_import_path"/>
+            </field>
+        </field>
+    </record>
+</odoo>

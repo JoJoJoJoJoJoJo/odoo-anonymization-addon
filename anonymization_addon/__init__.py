@@ -1,1 +1,1 @@
-from . import anonymization
+from . import wizard
