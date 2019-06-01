@@ -1,7 +1,5 @@
 # -*- encoding: utf-8 -*-
-from lxml import etree
 import os
-import base64
 try:
     import cPickle as pickle
 except ImportError:
@@ -10,14 +8,13 @@ import random
 import datetime
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
-from openerp.tools.safe_eval import safe_eval as eval
 
-from itertools import groupby
+import logging
+_logger = logging.getLogger(__name__)
 
 
 class ir_model_fields_anonymize_wizard(osv.osv_memory):
     _inherit = 'ir.model.fields.anonymize.wizard'
-
 
     def anonymize_database(self, cr, uid, ids, context=None):
         """Sets the 'anonymized' state to defined fields"""
@@ -41,6 +38,8 @@ class ir_model_fields_anonymize_wizard(osv.osv_memory):
                   " while some fields are not anonymized. You should try to solve this problem before trying to do anything.")
             self._raise_after_history_update(cr, uid, history_id, 'Error !', msg)
 
+        _logger.info('Ready to run the anonymization.')
+
         # do the anonymization:
         dirpath = os.environ.get('HOME') or os.getcwd()
         rel_filepath = 'field_anonymization_%s_%s.pickle' % (cr.dbname, history_id)
@@ -57,6 +56,7 @@ class ir_model_fields_anonymize_wizard(osv.osv_memory):
         data = []
 
         for field in fields:
+            _logger.info('Running anonymization: %s/%s', fields.index(field), len(fields))
             model_name = field.model_id.model
             field_name = field.field_id.name
             field_type = field.field_id.ttype
@@ -106,6 +106,7 @@ class ir_model_fields_anonymize_wizard(osv.osv_memory):
                 })
 
         # save pickle:
+        _logger.info('Saving to pickle file.')
         fn = open(abs_filepath, 'w')
         pickle.dump(data, fn, pickle.HIGHEST_PROTOCOL)
 
