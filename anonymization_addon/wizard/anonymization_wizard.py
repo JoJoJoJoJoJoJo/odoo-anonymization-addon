@@ -19,7 +19,7 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
     _inherit = 'ir.model.fields.anonymize.wizard'
 
     file_import_path = fields.Char(
-        'Import Path', required=True,
+        'Import Path',
         help="This is the file path created by the anonymization process. It should have the '.pickle' extention."
     )
 
