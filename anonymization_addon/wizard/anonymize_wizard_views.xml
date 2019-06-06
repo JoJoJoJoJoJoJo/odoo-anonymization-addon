@@ -5,9 +5,11 @@
         <field name="model">ir.model.fields.anonymize.wizard</field>
         <field name="inherit_id" ref="anonymization.view_ir_model_fields_anonymize_wizard_form"/>
         <field name="arch" type="xml">
-            <field name="file_import" position="after">
-                <field name="file_import_path"/>
-            </field>
+            <xpath expr="//group[@name='placeholder1']" position="after">
+                <group name="placeholder2">
+                    <field name="file_import_path"/>
+                </group>
+            </xpath>
         </field>
     </record>
 </odoo>
