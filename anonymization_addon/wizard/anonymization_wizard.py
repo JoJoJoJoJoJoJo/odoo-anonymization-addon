@@ -131,8 +131,9 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
                 # clicked in the menu and the fields are already anonymized
                 placeholder.addnext(etree.Element('newline'))
                 placeholder.addnext(etree.Element('field', {'name': 'file_import'}))
-                placeholder.addnext(etree.Element('field', {'name': 'file_import_path'}))
                 placeholder.addnext(etree.Element('label', {'string': 'Anonymization file'}))
+                placeholder.addnext(etree.Element('field', {'name': 'file_import_path'}))
+                placeholder.addnext(etree.Element('label', {'string': 'Pickle Path'}))
                 eview.remove(placeholder)
             elif step == 'just_anonymized':
                 # we just ran the anonymization process, we need the file export field
