@@ -132,6 +132,7 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
                 placeholder.addnext(etree.Element('newline'))
                 placeholder.addnext(etree.Element('field', {'name': 'file_import'}))
                 placeholder.addnext(etree.Element('label', {'string': 'Anonymization file'}))
+                placeholder.addnext(etree.Element('newline'))
                 placeholder.addnext(etree.Element('field', {'name': 'file_import_path'}))
                 placeholder.addnext(etree.Element('label', {'string': 'Pickle Path'}))
                 eview.remove(placeholder)
