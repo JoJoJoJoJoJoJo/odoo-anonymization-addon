@@ -2,6 +2,7 @@
 import base64
 import os
 
+from lxml import etree
 from operator import itemgetter
 
 from odoo import api, fields, models, _
