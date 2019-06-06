@@ -18,7 +18,7 @@ _logger = logging.getLogger(__name__)
 class IrModelFieldsAnonymizeWizard(models.TransientModel):
     _inherit = 'ir.model.fields.anonymize.wizard'
 
-    file_import_path = fields.String(
+    file_import_path = fields.Char(
         'Import Path', required=True,
         help="This is the file path created by the anonymization process. It should have the '.pickle' extention."
     )
