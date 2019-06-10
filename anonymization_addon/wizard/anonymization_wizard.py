@@ -57,7 +57,8 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
         i = 0
         for line in data:
             i += 1
-            _logger.info('Running unanonymization process: %s/%s', i, len(data))
+            if i % 1000 == 0:
+                _logger.info('Running unanonymization process: %s/%s', i, len(data))
             queries = []
             table_name = self.env[line['model_id']]._table if line['model_id'] in self.env else None
 
@@ -111,59 +112,3 @@ class IrModelFieldsAnonymizeWizard(models.TransientModel):
             'context': {'step': 'just_desanonymized'},
             'target': 'new'
         }
-
-    @api.model
-    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
-        state = self.env['ir.model.fields.anonymization']._get_global_state()
-        step = self.env.context.get('step', 'new_window')
-        res = super(IrModelFieldsAnonymizeWizard, self).fields_view_get(view_id=view_id, view_type=view_type, toolbar=toolbar, submenu=submenu)
-        eview = etree.fromstring(res['arch'])
-        placeholder = eview.xpath("group[@name='placeholder1']")
-        if len(placeholder):
-            placeholder = placeholder[0]
-            if step == 'new_window' and state == 'clear':
-                # clicked in the menu and the fields are not anonymized: warn the admin that backuping the db is very important
-                placeholder.addnext(etree.Element('field', {'name': 'msg', 'colspan': '4', 'nolabel': '1'}))
-                placeholder.addnext(etree.Element('newline'))
-                placeholder.addnext(etree.Element('label', {'string': 'Warning'}))
-                eview.remove(placeholder)
-            elif step == 'new_window' and state == 'anonymized':
-                # clicked in the menu and the fields are already anonymized
-                placeholder.addnext(etree.Element('newline'))
-                placeholder.addnext(etree.Element('field', {'name': 'file_import'}))
-                placeholder.addnext(etree.Element('label', {'string': 'Anonymization file'}))
-                placeholder.addnext(etree.Element('newline'))
-                placeholder.addnext(etree.Element('field', {'name': 'file_import_path'}))
-                placeholder.addnext(etree.Element('label', {'string': 'Pickle Path'}))
-                eview.remove(placeholder)
-            elif step == 'just_anonymized':
-                # we just ran the anonymization process, we need the file export field
-                placeholder.addnext(etree.Element('newline'))
-                placeholder.addnext(etree.Element('field', {'name': 'file_export'}))
-                # we need to remove the button:
-                buttons = eview.xpath("button")
-                for button in buttons:
-                    eview.remove(button)
-                # and add a message:
-                placeholder.addnext(etree.Element('field', {'name': 'msg', 'colspan': '4', 'nolabel': '1'}))
-                placeholder.addnext(etree.Element('newline'))
-                placeholder.addnext(etree.Element('label', {'string': 'Result'}))
-                # remove the placeholer:
-                eview.remove(placeholder)
-            elif step == 'just_desanonymized':
-                # we just reversed the anonymization process, we don't need any field
-                # we need to remove the button
-                buttons = eview.xpath("button")
-                for button in buttons:
-                    eview.remove(button)
-                # and add a message
-                placeholder.addnext(etree.Element('field', {'name': 'msg', 'colspan': '4', 'nolabel': '1'}))
-                placeholder.addnext(etree.Element('newline'))
-                placeholder.addnext(etree.Element('label', {'string': 'Result'}))
-                # remove the placeholer:
-                eview.remove(placeholder)
-            else:
-                raise UserError(_("The database anonymization is currently in an unstable state. Some fields are anonymized,"
-                                  " while some fields are not anonymized. You should try to solve this problem before trying to do anything else."))
-            res['arch'] = etree.tostring(eview)
-        return res
